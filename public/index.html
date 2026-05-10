@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATERNAI - Maternal Health Intelligence System</title>
+    
+    <!-- Local Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <!-- Your Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Bootstrap Icons (CDN - optional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="logo-container">
+                <div class="medical-logo">
+                    <div class="logo-circle">
+                        <i class="bi bi-heart-pulse-fill"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>MATERNAI</h1>
+                        <p>Maternal Health Intelligence System</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="login-form">
+            <div class="role-selector">
+                <button class="role-btn active" onclick="selectRole('doctor')">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Doctor</span>
+                </button>
+                <button class="role-btn" onclick="selectRole('patient')">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Patient</span>
+                </button>
+            </div>
+            <div class="input-icon-group">
+                <i class="bi bi-person"></i>
+                <input type="text" id="username" placeholder="Username" class="login-input">
+            </div>
+            <div class="input-icon-group">
+                <i class="bi bi-lock"></i>
+                <input type="password" id="password" placeholder="Password" class="login-input">
+            </div>
+            <button class="login-submit" onclick="login()">Login</button>
+            
+            <!-- Dynamic Role Action Link (same height for both roles) -->
+            <div id="roleActionLink" class="role-action-link">
+                <p id="roleActionText">
+                    <a href="#" onclick="showDoctorRegisterModal()">Don't have an account? Create Account</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Registration Modal -->
+<div id="doctorRegisterModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="bi bi-person-plus"></i> Create Doctor Account</h3>
+            <span class="modal-close" onclick="closeDoctorRegisterModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="input-icon-group">
+                <i class="bi bi-person"></i>
+                <input type="text" id="docFullName" placeholder="Full Name" class="login-input">
+            </div>
+            <div class="input-icon-group">
+                <i class="bi bi-envelope"></i>
+                <input type="email" id="docEmail" placeholder="Email Address" class="login-input">
+            </div>
+            <div class="input-icon-group">
+                <i class="bi bi-person-badge"></i>
+                <input type="text" id="docUsername" placeholder="Username" class="login-input">
+                <small id="docUsernameStatus" style="display: none; font-size: 11px;"></small>
+            </div>
+            <div class="input-icon-group">
+                <i class="bi bi-lock"></i>
+                <input type="password" id="docPassword" placeholder="Password" class="login-input">
+            </div>
+            <div class="input-icon-group">
+                <i class="bi bi-lock"></i>
+                <input type="password" id="docConfirmPassword" placeholder="Confirm Password" class="login-input">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeDoctorRegisterModal()">Cancel</button>
+            <button class="btn-primary" onclick="registerDoctorAccount()">Create Account</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardPage" style="display: none;">
+        <!-- Fixed Header - CLEAN: No doctor portal badge, no Dr. Smith -->
+        <div class="dashboard-header">
+            <div class="header-left">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <h2>MATERNAI</h2>
+            </div>
+            <div class="header-right">
+                <button class="logout-btn" onclick="logout()">
+                     Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Layout with Sidebar + Content -->
+        <div class="app-wrapper">
+            <!-- LEFT SIDEBAR - SCROLLABLE -->
+<div class="sidebar-scrollable">
+    <div class="sidebar-menu">
+        <a href="#" class="menu-link active" data-page="dashboard">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="#" class="menu-link" data-page="patients" id="managePatientsMenu">
+            <i class="bi bi-people"></i> Manage Patients
+        </a>
+        <a href="#" class="menu-link" data-page="manual">
+            <i class="bi bi-clipboard2-pulse"></i> Manual Check
+        </a>
+        <a href="#" class="menu-link" data-page="monitor">
+            <i class="bi bi-activity"></i> Real-time Monitor
+        </a>
+        <a href="#" class="menu-link" data-page="feature">
+            <i class="bi bi-bar-chart-steps"></i> Feature Importance
+        </a>
+        <a href="#" class="menu-link" data-page="xai">
+            <i class="bi bi-robot"></i> XAI Guide
+        </a>
+        <a href="#" class="menu-link" data-page="records">
+            <i class="bi bi-database"></i> Records
+        </a>
+        <a href="#" class="menu-link" data-page="assistant">
+            <i class="bi bi-chat-dots"></i> AI Assistant
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <i class="bi bi-shield-check"></i> Secure Portal
+    </div>
+</div>
+
+            <!-- RIGHT MAIN CONTENT - SCROLLABLE -->
+            <div class="content-scrollable">
+                <!-- Dashboard Page -->
+                <div id="dashboardPageContent" class="page-content active">
+                    <div class="page-header">
+                        <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+                        <span class="page-badge">Overview</span>
+                    </div>
+                    <div class="welcome-card">
+                        <h2>Welcome, <span id="welcomeUserName">User</span></h2>
+                        <p>MATERNAI AI-Powered Maternal Health Intelligence System</p>
+                        <div class="date-display" id="currentDateDisplay"></div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-number" id="statTotal">0</div>
+                            <div class="stat-label">Total Patients</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="statHighRisk">0</div>
+                            <div class="stat-label">High Risk Cases</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="statPredictions">0</div>
+                            <div class="stat-label">Predictions Made</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">System Status</div>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="info-card">
+                            <div class="card-title">
+                                <i class="bi bi-cpu"></i> System Overview
+                            </div>
+                            <div class="card-content">
+                                <div class="info-row"><span>AI Engine:</span><strong>XGBoost (97.2%accuracy)</strong></div>
+                                <div class="info-row"><span>Real-time Monitoring:</span><strong>Pulse, SpO2, Temperature</strong></div>
+                                <div class="info-row"><span>AI Assistant:</span><strong>Google Gemini</strong></div>
+                                <div class="info-row"><span>Data Security:</span><strong>Role-based access</strong></div>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="card-title">
+                                <i class="bi bi-heart-pulse"></i> Average Vitals
+                            </div>
+                            <div class="card-content">
+                                <div class="vital-row">
+                                    <span>❤️ Heart Rate:</span>
+                                    <strong id="avgHR">75 bpm</strong>
+                                </div>
+                                <div class="vital-row">
+                                    <span>🩸 SpO2:</span>
+                                    <strong id="avgSpO2">98%</strong>
+                                </div>
+                                <div class="vital-row">
+                                    <span>🌡️ Temperature:</span>
+                                    <strong id="avgTemp">36.5°C</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Warning Signs -->
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="bi bi-exclamation-triangle"></i> Warning Signs <span class="new-badge">URGENT</span>
+                        </div>
+                        <div class="slogans">
+                            <div class="slogan">⚠️ "Severe headache or blurred vision"</div>
+                            <div class="slogan">⚠️ "Decreased baby movements"</div>
+                            <div class="slogan">⚠️ "Bleeding or fluid leakage"</div>
+                            <div class="slogan">⚠️ "Severe abdominal pain"</div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="bi bi-bell-fill"></i> Latest Notifications <span class="new-badge">NEW</span>
+                        </div>
+                        <div class="notifications">
+                            <div class="notif-item">
+                                <i class="bi bi-megaphone-fill"></i>
+                                <div>
+                                    <strong>AI Model Update:</strong> XGBoost deployed with 97.2%accuracy
+                                    <div class="notif-time">Just now</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <i class="bi bi-shield-check"></i>
+                                <div>
+                                    <strong>Security Update:</strong> Role-based access control implemented
+                                    <div class="notif-time">2 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="notif-item">
+                                <i class="bi bi-robot"></i>
+                                <div>
+                                    <strong>AI Assistant:</strong> Google Gemini integration completed
+                                    <div class="notif-time">Yesterday</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Check Page -->
+                <div id="manualPageContent" class="page-content">
+                    <div class="page-header">
+                        <h2><i class="bi bi-clipboard2-pulse"></i> Manual Check</h2>
+                        <span class="page-badge">Risk Assessment</span>
+                    </div>
+                    <div class="manual-form">
+<input type="text" id="patientName" placeholder="Patient Name" class="form-input" list="patientNamesList">                        <input type="text" id="patientId" placeholder="Patient ID" class="form-input">
+                        <div class="vitals-row">
+                            <input type="number" id="pulse" placeholder="Pulse (bpm)" class="form-input" value="75">
+                            <input type="number" id="spo2" placeholder="SpO2 (%)" class="form-input" value="98">
+                            <input type="number" id="temp" placeholder="Temperature (°C)" class="form-input" step="0.1" value="36.5">
+                        </div>
+                        <button class="btn-primary" onclick="calculateRisk()">Calculate Risk</button>
+                    </div>
+                    <div class="risk-result" id="riskResult" style="display: none;">
+                        <div class="risk-score" id="riskScore"></div>
+                        <div class="risk-bar-container">
+                            <div class="risk-bar-fill" id="riskBarFill"></div>
+                        </div>
+                        <div class="risk-guidance" id="riskGuidance"></div>
+                    </div>
+                </div>
+
+                <!-- Real-time Monitor Page -->
+<div id="monitorPageContent" class="page-content">
+    <div class="page-header">
+        <h2><i class="bi bi-activity"></i> Real-time Monitor</h2>
+        <span class="page-badge">Live Streaming</span>
+    </div>
+    <div class="monitor-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Patient Name</label>
+                <input type="text" id="monitorName" placeholder="Enter patient name" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Patient ID</label>
+                <input type="text" id="monitorId" placeholder="Enter patient ID" class="form-input">
+            </div>
+        </div>
+        <div class="form-row">
+            <button class="btn-primary" onclick="startMonitor()" id="startRealtimeBtn">
+                <i class="bi bi-play-circle"></i> Start Monitoring
+            </button>
+            <button class="btn-secondary" onclick="stopMonitor()" id="stopBtn" style="display: none;">
+                <i class="bi bi-stop-circle"></i> Stop Monitoring
+            </button>
+        </div>
+    </div>
+    <div class="live-vitals">
+        <div class="live-card">
+            <div class="live-icon">❤️</div>
+            <div class="live-value" id="livePulse">--</div>
+            <div class="live-label">Pulse (bpm)</div>
+            <div class="vital-status" id="livePulseStatus">--</div>
+        </div>
+        <div class="live-card">
+            <div class="live-icon">🩸</div>
+            <div class="live-value" id="liveSpO2">--</div>
+            <div class="live-label">SpO2 (%)</div>
+            <div class="vital-status" id="liveSpO2Status">--</div>
+        </div>
+        <div class="live-card">
+            <div class="live-icon">🌡️</div>
+            <div class="live-value" id="liveTemp">--</div>
+            <div class="live-label">Temperature (°C)</div>
+            <div class="vital-status" id="liveTempStatus">--</div>
+        </div>
+    </div>
+    <div class="status-indicator" id="monitorStatus"></div>
+</div>
+
+                <!-- Feature Importance Page -->
+                <div id="featurePageContent" class="page-content">
+                    <div class="page-header">
+                        <h2><i class="bi bi-bar-chart-steps"></i> Feature Importance</h2>
+                        <span class="page-badge">Model Analysis</span>
+                    </div>
+                    <div class="feature-importance-container">
+                        <div class="feature-card">
+                            <div class="card-title">
+                                <i class="bi bi-graph-up"></i> Model Feature Contributions
+                            </div>
+                            <div class="feature-chart-container">
+                                <canvas id="featureChart" width="500" height="300" style="width:100%; height:300px;"></canvas>
+                            </div>
+                            <div class="feature-explanations">
+                                <div class="feature-explanation-item">
+                                    <div class="feature-color pulse-color"></div>
+                                    <div class="feature-details">
+                                        <strong>Pulse Rate</strong>
+                                        <p id="pulseExplanation">Most significant contributor (45%). Abnormal heart rate (below 60 or above 100 bpm) significantly increases risk.</p>
+                                    </div>
+                                </div>
+                                <div class="feature-explanation-item">
+                                    <div class="feature-color spo2-color"></div>
+                                    <div class="feature-details">
+                                        <strong>Oxygen Saturation (SpO2)</strong>
+                                        <p id="spo2Explanation">Second most important (35%). Values below 95% indicate potential respiratory issues.</p>
+                                    </div>
+                                </div>
+                                <div class="feature-explanation-item">
+                                    <div class="feature-color temp-color"></div>
+                                    <div class="feature-details">
+                                        <strong>Temperature</strong>
+                                        <p id="tempExplanation">Contributes 20% to risk assessment. Abnormal temperatures (below 36°C or above 37.5°C) increase risk.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="card-title">
+                                <i class="bi bi-info-circle"></i> How Feature Importance Works
+                            </div>
+                            <div class="feature-info-text">
+                                <p>Our XGBoost model analyzes each vital sign and calculates its contribution to the final risk score. Feature importance is determined by how much each feature reduces prediction error across all decision trees.</p>
+                                <ul>
+                                    <li><strong>Pulse Rate:</strong> Most critical - sudden changes indicate cardiovascular stress</li>
+                                    <li><strong>SpO2:</strong> Essential for detecting oxygen deprivation in mother and fetus</li>
+                                    <li><strong>Temperature:</strong> Key indicator of infection or inflammatory response</li>
+                                </ul>
+                                <div class="model-accuracy-badge">
+                                    <i class="bi bi-check-circle-fill"></i> Model Accuracy: 97.2%| XGBoost Classifier
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- XAI Guide Page -->
+<div id="xaiPageContent" class="page-content">
+    <div class="page-header">
+        <h2><i class="bi bi-robot"></i> XAI Guide</h2>
+        <span class="page-badge">Explainable AI</span>
+    </div>
+    
+    <!-- Two Column Layout for XAI Content -->
+    <div class="xai-split-layout">
+        
+        <!-- LEFT PANEL: Feature Contributions -->
+        <div class="xai-card">
+            <div class="xai-header">
+                <i class="bi bi-bar-chart-steps"></i>
+                <span>Feature Contributions to Risk Score</span>
+            </div>
+            <div id="xaiContent" class="xai-content">
+                <div class="xai-placeholder">
+                    <i class="bi bi-graph-up" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                    <p>👈 Perform a Manual Check or start Real-time Monitoring to see AI explanations.</p>
+                    <p>The system will show you why a particular risk level was assigned based on patient vitals.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RIGHT PANEL: AI Recommendations -->
+        <div class="xai-card">
+            <div class="xai-header">
+                <i class="bi bi-chat-dots"></i>
+                <span>AI Recommendations</span>
+            </div>
+            <div id="aiRecommendationsContent" class="xai-content">
+                <div class="xai-placeholder">
+                    <i class="bi bi-robot" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                    <p>Clinical recommendations will appear here based on risk assessment.</p>
+                    <p>Get actionable medical guidance matching PDF report content.</p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Bottom Card: What is Explainable AI (XAI)? -->
+    <div class="xai-card" style="margin-top: 24px;">
+        <div class="xai-header">
+            <i class="bi bi-question-circle"></i>
+            <span>What is Explainable AI (XAI)?</span>
+        </div>
+        <div class="xai-content">
+            <p>XAI helps healthcare providers understand WHY the AI model made a specific prediction. This transparency builds trust and enables better clinical decisions.</p>
+            <div class="xai-features">
+                <div class="xai-feature">
+                    <i class="bi bi-1-circle"></i>
+                    <span>Feature Contribution - See which vital sign influenced the decision most</span>
+                </div>
+                <div class="xai-feature">
+                    <i class="bi bi-2-circle"></i>
+                    <span>Risk Factors - Understand abnormal values triggering alerts</span>
+                </div>
+                <div class="xai-feature">
+                    <i class="bi bi-3-circle"></i>
+                    <span>Clinical Guidance - Receive actionable recommendations</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                <!-- Records Page -->
+<div id="recordsPageContent" class="page-content">
+    <div class="page-header">
+        <h2><i class="bi bi-database"></i> Records</h2>
+        <span class="page-badge">Patient History</span>
+    </div>
+    <div class="records-controls">
+        <input type="text" id="searchInput" placeholder="Search patients..." class="form-input">
+        <select id="riskFilter" class="form-select">
+            <option value="all">All Risks</option>
+            <option value="low">Low Risk</option>
+            <option value="medium">Medium Risk</option>
+            <option value="high">High Risk</option>
+        </select>
+        <button class="btn-danger doctor-only" id="clearAllBtn" onclick="clearAllRecords()" style="display: none;">Clear All Records</button>
+    </div>
+    <div class="records-table-wrapper">
+        <table class="records-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Vitals</th>
+                    <th>Risk</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="recordsList"></tbody>
+        </table>
+    </div>
+</div>
+
+                <!-- Patient Management Page (Doctor Only) -->
+                <div id="patientsPageContent" class="page-content">
+                    <div class="page-header">
+                        <h2><i class="bi bi-people"></i> Manage Patients</h2>
+                        <span class="page-badge">Account Management</span>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="bi bi-person-plus"></i> Create New Patient Account
+                        </div>
+                        <div class="card-content">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end;">
+                                <div>
+                                    <label>Full Name</label>
+                                    <input type="text" id="newPatientName" placeholder="Full Name" class="form-input" style="margin-bottom: 0;">
+                                </div>
+                                <div>
+                                    <label>Username</label>
+                                    <input type="text" id="newPatientUsername" placeholder="Username" class="form-input" style="margin-bottom: 0;">
+                                </div>
+                                <div>
+                                    <label>Password</label>
+                                    <input type="text" id="newPatientPassword" placeholder="Password" class="form-input" style="margin-bottom: 0;">
+                                </div>
+                                <div>
+                                    <button class="btn-primary" onclick="createPatientAccount()" style="width: 100%;">
+                                        <i class="bi bi-plus-circle"></i> Create
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="bi bi-list-ul"></i> Registered Patients
+                        </div>
+                        <div class="card-content">
+                            <div class="records-table-wrapper">
+                                <table class="records-table">
+                                    <thead>
+                                        <tr><th>ID</th><th>Patient Name</th><th>Username</th><th>Records</th><th>Created Date</th><th>Actions</th></tr>
+                                    </thead>
+                                    <tbody id="patientListBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               <!-- AI Assistant Page -->
+<div id="assistantPageContent" class="page-content">
+    <div class="page-header">
+        <h2><i class="bi bi-chat-dots"></i> AI Assistant</h2>
+        <div style="display: flex; gap: 10px;">
+            <button class="new-chat-btn" onclick="startNewChat()" title="Start New Chat">
+                <i class="bi bi-plus-circle"></i> New Chat
+            </button>
+            <button class="history-chat-btn" onclick="toggleChatHistory()" title="View Chat History">
+                <i class="bi bi-clock-history"></i> History
+            </button>
+            <span class="page-badge">Powered by Gemini</span>
+        </div>
+    </div>
+    
+    <div class="chat-layout">
+        <!-- Chat History Sidebar -->
+        <div class="chat-history-sidebar" id="chatHistorySidebar" style="display: none;">
+            <div class="history-header">
+                <h4><i class="bi bi-clock-history"></i> Chat History</h4>
+                <button class="close-history-btn" onclick="toggleChatHistory()">✕</button>
+            </div>
+            <div class="history-list" id="chatHistoryList">
+                <div class="history-loading">Loading conversations...</div>
+            </div>
+        </div>
+        
+        <!-- Main Chat Area -->
+        <div class="chat-main-area">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be dynamically loaded here -->
+                </div>
+                <div class="chat-input-wrapper">
+                    <div class="chat-input-container">
+                        <div class="input-prefix">
+                            <i class="bi bi-chat-dots-fill"></i>
+                        </div>
+                        <textarea 
+                            id="chatInput" 
+                            placeholder="Ask me anything about maternal health..." 
+                            rows="1"
+                            onkeydown="handleEnterKey(event)"
+                        ></textarea>
+                        <button id="sendButton" class="send-btn" onclick="sendMessage()">
+                            <i class="bi bi-send-fill"></i>
+                            <span>Send</span>
+                        </button>
+                    </div>
+                    <div class="chat-footer">
+                        <span><i class="bi bi-shield-check"></i> AI-powered responses</span>
+                        <span><i class="bi bi-gem"></i> Gemini 2.0 Flash</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add this loading spinner somewhere in your dashboard -->
+<div id="loadingOverlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 20px; border-radius: 10px; z-index: 9999;">
+    <i class="bi bi-arrow-repeat spin"></i> Loading...
+</div>
+
+<style>
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.spin {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+</style>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

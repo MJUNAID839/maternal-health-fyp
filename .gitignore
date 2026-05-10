@@ -1,0 +1,60 @@
+# Environment variables (keep sensitive data off GitHub)
+.env
+.env.local
+.env.production
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments (too large, should be recreated)
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+
+# Database files (contains patient records - privacy)
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# IDE settings (personal preferences)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.orig
+
+# Data folder (dataset - optional, can be downloaded)
+# Comment out if you want to include your dataset
+data/
+
+# VS Code specific (optional)
+.vscode/settings.json
+.vscode/launch.json
+
+# ============================================
+# TRAINED MODEL IS INCLUDED (NOT IGNORED)
+# Your models/*.joblib and models/*.json WILL be uploaded
+# ============================================
+models/*.joblib   ← COMMENTED OUT - MODEL WILL BE INCLUDED
+models/*.json     ← COMMENTED OUT - MODEL WILL BE INCLUDED

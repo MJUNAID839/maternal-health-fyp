@@ -1,0 +1,24 @@
+============================================================
+MATERNAI XGBOOST TRAINING SUMMARY
+============================================================
+
+Test Accuracy: 0.9701 (97.01%)
+Train Accuracy: 0.9739 (97.39%)
+
+Model Ranking:
+#1 XGBoost: 0.9722
+#5 K-Neighbors: 0.9691
+#2 SVM: 0.9628
+#3 Logistic Regression: 0.9405
+#4 Decision Tree: 0.8126
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.97      0.93      0.95       307
+      Medium       0.97      0.97      0.97       720
+        High       0.97      0.99      0.98       746
+
+    accuracy                           0.97      1773
+   macro avg       0.97      0.96      0.97      1773
+weighted avg       0.97      0.97      0.97      1773
